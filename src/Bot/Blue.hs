@@ -21,7 +21,7 @@ makeMove b i = case concat (board b) of
 hehe ::[Pair]->  Int
 hehe   p = case p of
                x:xs
-                | maximum (map fst p) == fst  -> snd x
+                | maximum (map fst p) == fst x  -> snd x
                 | otherwise                     -> hehe xs
                [] -> (div 11 2)+1
 
