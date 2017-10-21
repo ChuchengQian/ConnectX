@@ -13,36 +13,34 @@ import Data.Player
 
 
 makeMove :: Board -> LookAhead -> Int
---makeMove b i = case concat (board b) of
---                    []   -> (div 11 2)+1
---                    _:_  -> hehe (findindex b i 0 (-100000,100000))
-makeMove b i = hehe(findindex b i 0 (-100000, 100000))
-
-hehe ::[Pair]->  Int
-hehe   p = case p of
-               x:xs
-                | maximum (map fst p) == fst x  -> snd x
-                | otherwise                     -> hehe xs
-               [] -> (div 11 2)+1
-
-
-
-findindex :: Board -> LookAhead -> Int ->(Alpha,Beta) -> [Pair]
-findindex b i a (alpha,beta) = zip (map (scoreList i (turn b) a (alpha,beta)) (nextboards b)) [1..11]
-
-
+makeMove b i = case concat (board b) of
+                    []   -> (div 11 2) + 1
+                    _:_  -> findMax (findIndex b i 0)
 
 type Alpha = Int
-type Beta = Int
-type Pair = (Int,Score)
+type Beta  = Int
+type Pair  = (Int, Score)
+
+-- hehe ::[Pair]->  Int
+-- hehe   p = case p of
+--                x:xs
+--                 | maximum (map fst p) == fst x  -> snd x
+--                 | otherwise                     -> hehe xs
+--                [] -> (div 11 2)+1
+
+
+findIndex :: Board -> LookAhead -> Int -> [Pair]
+findIndex b i a = zip movelist scorelist
+    where
+        movelist = filter (validMove b) [1..(getWidth b)]
+        scorelist = map (scoreList i (turn b) a (-100000, 100000)) (nextboards b)
+
 
 heuristic ::  Board -> Player -> Score
 heuristic    b p = case p of
              BlueBot -> (blueScore b) - (redScore b)
              RedBot  -> (redScore b) - (blueScore b)
              Finished -> 0
-
-
 
 scoreList :: LookAhead -> Player -> Int -> (Alpha,Beta) -> Board -> Score
 scoreList   i mp a (alpha,beta) b = case (a==i || (nextboards b) == []) of
@@ -83,7 +81,13 @@ nextboards b = map (updateBoard b) (filter (validMove b) [1..width])
 getWidth :: Board -> Int
 getWidth    b = fst $ dimension b
 
-
+findMax :: [Pair] -> Int
+findMax list = fst(foldr maxPair (0, -100000) list)
+    where
+        maxPair :: Pair -> Pair -> Pair
+        maxPair (a1, s1) (a2, s2)
+            | s1 >= s2 = (a1, s1)
+            | otherwise = (a2, s2)
 
 
 
