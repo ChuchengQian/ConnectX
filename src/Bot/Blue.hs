@@ -76,7 +76,7 @@ validboardlist b = map (updateBoard b) (validmovelist b 1)
 
 validmovelist:: Board -> Index -> [Index]
 validmovelist   b i
-            |i <= (fst $ dimension b) = case (validMove b i) of
+            |i <= 11 = case (validMove b i) of
                                 True  -> [i]++(validmovelist b (i+1))
                                 False -> []++ (validmovelist b (i+1))
             |otherwise = []
