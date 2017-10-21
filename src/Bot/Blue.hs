@@ -15,7 +15,7 @@ import Data.Player
 makeMove :: Board -> LookAhead -> Int
 makeMove b i = case concat (board b) of
                     []   -> (div 11 2)+1
-                    _:_  -> hehe (findindex b i 0 (-100000,100000)) b
+                    _:_  -> hehe (findindex b i 0 (-100000,100000))
 
 
 hehe ::[Pair]->  Int
