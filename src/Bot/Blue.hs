@@ -8,30 +8,27 @@ module Bot.Blue where
     
 import Data.Board
 
-
 import Data.Player
 
 
-data GameTree a = Node a [GameTree a]      deriving (Show, Eq)
-
 
 makeMove :: Board -> LookAhead -> Int
-makeMove b i = case (board b)of
-                 []  -> (div (fst $ dimension b) 2)+1
-                 _   -> hehe (findindex b i 0 (-100000,100000)) b
+makeMove b i = case concat (board b) of
+                    []   -> (div 11 2)+1
+                    _:_  -> hehe (findindex b i 0 (-100000,100000)) b
 
 
-hehe ::[Pair]-> Board ->  Int
-hehe   p b = case p of
+hehe ::[Pair]->  Int
+hehe   p = case p of
                x:xs
                 | maximum (map snd p) == snd x  -> fst x
-                | otherwise                     -> hehe xs b
-               [] -> (div (fst $ dimension b) 2)+1
+                | otherwise                     -> hehe xs
+               [] -> (div 11 2)+1
 
 
 
 findindex :: Board -> LookAhead -> Int ->(Alpha,Beta) -> [Pair]
-findindex b i a (alpha,beta) = zip (map (scorelist i a (alpha,beta)) (validboardlist b)) [1..(fst $ dimension b)]
+findindex b i a (alpha,beta) = zip (map (scorelist i a (alpha,beta)) (validboardlist b)) [1..11]
 
 
 
@@ -71,7 +68,7 @@ scorelist   i a (alpha,beta) b = case (a==i) of
                      x:xs
                          |  alpha2 >= beta2    -> beta2
                          |  (scorelist i (a+1) (alpha2,beta2) x) < beta2  -> minimise xs  ((heuristic x (turn x)),beta2)
-                         |  (scorelist i (a+1) (alpha2,beta2) x) >= beta2 && (scorelist i (a+1) (alpha2,beta2) x) <= beta2-> minimise xs  (alpha2,beta2)
+                         |  (scorelist i (a+1) (alpha2,beta2) x) >= beta2 && (scorelist i (a+1) (alpha2,beta2) x) >= alpha2-> minimise xs  (alpha2,beta2)
 
 
 validboardlist:: Board -> [Board]
@@ -80,7 +77,7 @@ validboardlist b = map (updateBoard b) (validmovelist b 1)
 validmovelist:: Board -> Index -> [Index]
 validmovelist   b i
             |i <= (fst $ dimension b) = case (validMove b i) of
-                                True  -> i:(validmovelist b (i+1))
+                                True  -> [i]++(validmovelist b (i+1))
                                 False -> []++ (validmovelist b (i+1))
             |otherwise = []
 
