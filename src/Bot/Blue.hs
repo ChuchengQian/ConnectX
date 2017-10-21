@@ -16,7 +16,7 @@ makeMove :: Board -> LookAhead -> Int
 --makeMove b i = case concat (board b) of
 --                    []   -> (div 11 2)+1
 --                    _:_  -> hehe (findindex b i 0 (-100000,100000))
-makemove b i = hehe(findindex b i 0 (-100000, 100000))
+makeMove b i = hehe(findindex b i 0 (-100000, 100000))
 
 hehe ::[Pair]->  Int
 hehe   p = case p of
