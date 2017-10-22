@@ -6,11 +6,6 @@ import Data.Player
 
 
 
---makeMove :: Board -> LookAhead -> Int
---makeMove b i = case concat (board b) of
-         --           []   -> (div 11 2) + 1
-          --          _:_  -> findMax (findIndex b i 0)
-
 
 makeMove :: Board -> LookAhead -> Int
 makeMove b i = case concat (board b) of
@@ -21,12 +16,6 @@ type Alpha = Int
 type Beta  = Int
 type Pair  = (Int, Score)
 
--- hehe ::[Pair]->  Int
--- hehe   p = case p of
---                x:xs
---                 | maximum (map fst p) == fst x  -> snd x
---                 | otherwise                     -> hehe xs
---                [] -> (div 11 2)+1
 
 
 findIndex :: Board -> LookAhead -> Int -> [Pair]
@@ -44,7 +33,7 @@ heuristic    b p = case p of
 
 scoreList :: LookAhead -> Player -> Int -> (Alpha,Beta) -> Board -> Score
 scoreList   i mp a (alpha,beta) b = case (a==i || (nextboards b) == []) of
-            True        -> heuristic b (turn b)
+            True        -> heuristic b mp
             False
                 | mp == (turn b)  -> maximise (nextboards b) (alpha, beta)
                 | otherwise       -> minimise (nextboards b) (alpha, beta)
@@ -70,8 +59,6 @@ scoreList   i mp a (alpha,beta) b = case (a==i || (nextboards b) == []) of
                          | (scoreList i mp (a+1) (alpha2,beta2) x) <= alpha2 -> alpha2
                          | (scoreList i mp (a+1) (alpha2,beta2) x) <= beta2 -> minimise xs (alpha2,(scoreList i mp (a+1) (alpha2,beta2) x))
                          | otherwise -> minimise xs (alpha2,beta2)
-                        -- |  (scoreList i (a+1) (alpha2,beta2) x) < beta2  -> minimise xs  ((heuristic x (turn x)),beta2)
-                       --  |  (scoreList i (a+1) (alpha2,beta2) x) >= beta2 && (scoreList i (a+1) (alpha2,beta2) x) >= alpha2-> minimise xs  (alpha2,beta2)
 
 nextboards :: Board -> [Board]
 nextboards b = map (updateBoard b) (filter (validMove b) [1..width])
@@ -92,12 +79,3 @@ findMax list = fst(foldr maxPair (0, -100000) list)
 
 
 
---validboardlist:: Board -> [Board]
---validboardlist b = map (updateBoard b) (validmovelist b 1)
-
---validmovelist:: Board -> Index -> [Index]
---validmovelist   b i = case (i <= 11) of
- --           True -> case (validMove b i) of
-  --                              True  -> [i]++(validmovelist b (i+1))
- --                               False -> []++ (validmovelist b (i+1))
- --
